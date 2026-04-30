@@ -32,3 +32,7 @@ class UserResponse(BaseModel):
 
     class Config:
         populate_by_name = True
+
+
+class RoleUpdateRequest(BaseModel):
+    roles: List[str] = Field(..., min_items=1)

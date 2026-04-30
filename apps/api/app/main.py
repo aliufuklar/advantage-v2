@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 from app.core.database import db
 from app.core.config import settings
 
-from app.api.routes import auth, customers, quotes, orders, discoveries, inventory, finance, personnel
+from app.api.routes import auth, customers, quotes, orders, discoveries, inventory, finance, personnel, purchasing, production
 
 
 @asynccontextmanager
@@ -41,6 +41,8 @@ app.include_router(discoveries.router, prefix="/api/discoveries", tags=["discove
 app.include_router(inventory.router, prefix="/api/inventory", tags=["inventory"])
 app.include_router(finance.router, prefix="/api/finance", tags=["finance"])
 app.include_router(personnel.router, prefix="/api/personnel", tags=["personnel"])
+app.include_router(purchasing.router, prefix="/api/purchasing", tags=["purchasing"])
+app.include_router(production.router, prefix="/api/production", tags=["production"])
 
 
 @app.get("/")

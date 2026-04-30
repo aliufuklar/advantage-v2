@@ -10,6 +10,13 @@ import { DiscoveriesPage } from '@/pages/DiscoveriesPage';
 import { PersonnelPage } from '@/pages/PersonnelPage';
 import { InventoryPage } from '@/pages/InventoryPage';
 import { FinancePage } from '@/pages/FinancePage';
+import { ProductionPage } from '@/pages/ProductionPage';
+import { AccountDetail } from '@/pages/AccountDetail';
+import { SuppliersPage } from '@/pages/SuppliersPage';
+import { PurchaseOrdersPage } from '@/pages/PurchaseOrdersPage';
+import { SupplierQuotesPage } from '@/pages/SupplierQuotesPage';
+import { AccessDenied } from '@/pages/AccessDeniedPage';
+import { PermissionGuard } from '@/components/PermissionGuard';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -22,15 +29,105 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <LoginPage />} />
+      <Route path="/access-denied" element={<AccessDenied />} />
       <Route path="/" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
         <Route index element={<DashboardPage />} />
-        <Route path="customers" element={<CustomersPage />} />
-        <Route path="quotes" element={<QuotesPage />} />
-        <Route path="orders" element={<OrdersPage />} />
-        <Route path="discoveries" element={<DiscoveriesPage />} />
-        <Route path="personnel" element={<PersonnelPage />} />
-        <Route path="inventory" element={<InventoryPage />} />
-        <Route path="finance" element={<FinancePage />} />
+        <Route
+          path="customers"
+          element={
+            <PermissionGuard requiredPermissions={['customers:read']} redirectTo="/access-denied">
+              <CustomersPage />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="quotes"
+          element={
+            <PermissionGuard requiredPermissions={['quotes:read']} redirectTo="/access-denied">
+              <QuotesPage />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="orders"
+          element={
+            <PermissionGuard requiredPermissions={['orders:read']} redirectTo="/access-denied">
+              <OrdersPage />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="production"
+          element={
+            <PermissionGuard requiredPermissions={['production:read']} redirectTo="/access-denied">
+              <ProductionPage />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="discoveries"
+          element={
+            <PermissionGuard requiredPermissions={['discoveries:read']} redirectTo="/access-denied">
+              <DiscoveriesPage />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="personnel"
+          element={
+            <PermissionGuard requiredPermissions={['personnel:read']} redirectTo="/access-denied">
+              <PersonnelPage />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="inventory"
+          element={
+            <PermissionGuard requiredPermissions={['inventory:read']} redirectTo="/access-denied">
+              <InventoryPage />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="finance"
+          element={
+            <PermissionGuard requiredPermissions={['finance:read']} redirectTo="/access-denied">
+              <FinancePage />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="finance/account/:id"
+          element={
+            <PermissionGuard requiredPermissions={['finance:read']} redirectTo="/access-denied">
+              <AccountDetail />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="purchasing"
+          element={
+            <PermissionGuard requiredPermissions={['purchasing:read']} redirectTo="/access-denied">
+              <SuppliersPage />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="purchasing/orders"
+          element={
+            <PermissionGuard requiredPermissions={['purchasing:read']} redirectTo="/access-denied">
+              <PurchaseOrdersPage />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="purchasing/quotes"
+          element={
+            <PermissionGuard requiredPermissions={['purchasing:read']} redirectTo="/access-denied">
+              <SupplierQuotesPage />
+            </PermissionGuard>
+          }
+        />
       </Route>
     </Routes>
   );

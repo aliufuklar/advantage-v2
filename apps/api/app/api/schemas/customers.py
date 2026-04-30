@@ -7,6 +7,7 @@ from datetime import datetime
 
 
 class ContactPerson(BaseModel):
+    id: Optional[str] = None
     name: str
     phone: Optional[str] = None
     email: Optional[EmailStr] = None
@@ -14,6 +15,7 @@ class ContactPerson(BaseModel):
 
 
 class Address(BaseModel):
+    id: Optional[str] = None
     label: str = "Main"
     street: Optional[str] = None
     city: Optional[str] = None
@@ -23,6 +25,7 @@ class Address(BaseModel):
 
 
 class BankAccount(BaseModel):
+    id: Optional[str] = None
     bankName: str
     branchName: Optional[str] = None
     accountNumber: Optional[str] = None
@@ -49,8 +52,12 @@ class CustomerCreate(CustomerBase):
 class CustomerUpdate(BaseModel):
     legalName: Optional[str] = None
     shortName: Optional[str] = None
+    customerType: Optional[str] = None
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
+    taxOffice: Optional[str] = None
+    taxId: Optional[str] = None
+    isActive: Optional[bool] = None
     addresses: Optional[List[Address]] = None
     contacts: Optional[List[ContactPerson]] = None
     bankAccounts: Optional[List[BankAccount]] = None
@@ -62,6 +69,18 @@ class CustomerResponse(CustomerBase):
     balance: float = 0.0
     isActive: bool = True
     createdAt: Optional[str] = None
+    updatedAt: Optional[str] = None
 
     class Config:
         populate_by_name = True
+
+
+class CustomerSearchParams(BaseModel):
+    search: Optional[str] = None
+    customerType: Optional[str] = None  # customer, supplier, or None for all
+    page: int = 1
+    pageSize: int = 20
+
+
+class BalanceUpdate(BaseModel):
+    amount: float

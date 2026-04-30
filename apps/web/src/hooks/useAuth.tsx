@@ -1,11 +1,15 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { api } from '@/lib/api';
 import type { User, AuthState } from '@/types';
+import { computePermissions } from '@/types';
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, username: string, password: string, fullName: string) => Promise<void>;
   logout: () => void;
+  hasPermission: (permission: string) => boolean;
+  hasAnyPermission: (permissions: string[]) => boolean;
+  hasAllPermissions: (permissions: string[]) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,26 +19,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user: null,
     token: localStorage.getItem('token'),
     isAuthenticated: false,
+    permissions: [],
   });
 
   useEffect(() => {
     if (state.token) {
       api.setToken(state.token);
       api.getMe().then((user: unknown) => {
-        setState({ user: user as User, token: state.token, isAuthenticated: true });
+        const userData = user as User;
+        const permissions = computePermissions(userData.roles || []);
+        setState({
+          user: userData,
+          token: state.token,
+          isAuthenticated: true,
+          permissions,
+        });
       }).catch(() => {
         localStorage.removeItem('token');
-        setState({ user: null, token: null, isAuthenticated: false });
+        setState({ user: null, token: null, isAuthenticated: false, permissions: [] });
       });
     }
   }, [state.token]);
+
+  const hasPermission = (permission: string): boolean => {
+    if (state.permissions.includes('admin:all')) return true;
+    return state.permissions.includes(permission);
+  };
+
+  const hasAnyPermission = (permissions: string[]): boolean => {
+    return permissions.some(perm => hasPermission(perm));
+  };
+
+  const hasAllPermissions = (permissions: string[]): boolean => {
+    return permissions.every(perm => hasPermission(perm));
+  };
 
   const login = async (email: string, password: string) => {
     const data = await api.login(email, password);
     localStorage.setItem('token', data.accessToken);
     api.setToken(data.accessToken);
     const user = await api.getMe();
-    setState({ user: user as User, token: data.accessToken, isAuthenticated: true });
+    const userData = user as User;
+    const permissions = computePermissions(userData.roles || []);
+    setState({ user: userData, token: data.accessToken, isAuthenticated: true, permissions });
   };
 
   const register = async (email: string, username: string, password: string, fullName: string) => {
@@ -44,11 +71,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     localStorage.removeItem('token');
     api.setToken(null);
-    setState({ user: null, token: null, isAuthenticated: false });
+    setState({ user: null, token: null, isAuthenticated: false, permissions: [] });
   };
 
   return (
-    <AuthContext.Provider value={{ ...state, login, register, logout }}>
+    <AuthContext.Provider value={{ ...state, login, register, logout, hasPermission, hasAnyPermission, hasAllPermissions }}>
       {children}
     </AuthContext.Provider>
   );

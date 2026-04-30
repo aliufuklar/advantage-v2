@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
+import { FinanceSummaryWidget } from '@/components/finance/FinanceSummaryWidget';
 
 interface Stats {
   totalCustomers: number;
@@ -39,6 +40,11 @@ export function DashboardPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-8">Dashboard</h1>
+
+      <div className="mb-8">
+        <FinanceSummaryWidget />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard title="Müşteriler" value={stats.totalCustomers} icon="👥" />
         <StatCard title="Teklifler" value={stats.totalQuotes} icon="📋" />

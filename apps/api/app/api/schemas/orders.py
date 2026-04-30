@@ -14,6 +14,20 @@ class ChecklistItem(BaseModel):
     completedBy: Optional[str] = None
 
 
+class ChecklistItemUpdate(BaseModel):
+    """Used for updating a single checklist item"""
+    id: str
+    label: Optional[str] = None
+    completed: Optional[bool] = None
+
+
+class TimelineEntry(BaseModel):
+    action: str
+    userId: str
+    timestamp: str
+    details: Optional[str] = None
+
+
 class OrderItem(BaseModel):
     description: str
     quantity: float = 1
@@ -37,6 +51,7 @@ class OrderBase(BaseModel):
     priority: str = "normal"
     dueDate: Optional[str] = None
     checklist: List[ChecklistItem] = []
+    timeline: List[TimelineEntry] = []
     notes: Optional[str] = None
 
 
@@ -46,11 +61,20 @@ class OrderCreate(OrderBase):
 
 class OrderUpdate(BaseModel):
     title: Optional[str] = None
+    quoteId: Optional[str] = None
+    customerId: Optional[str] = None
+    customerName: Optional[str] = None
     items: Optional[List[OrderItem]] = None
+    subtotal: Optional[float] = None
+    taxRate: Optional[float] = None
+    taxAmount: Optional[float] = None
+    total: Optional[float] = None
+    currency: Optional[str] = None
     status: Optional[str] = None
     priority: Optional[str] = None
     dueDate: Optional[str] = None
     checklist: Optional[List[ChecklistItem]] = None
+    timeline: Optional[List[TimelineEntry]] = None
     notes: Optional[str] = None
 
 
@@ -60,6 +84,7 @@ class OrderResponse(OrderBase):
     createdBy: Optional[str] = None
     createdAt: Optional[str] = None
     updatedAt: Optional[str] = None
+    timeline: List[TimelineEntry] = []
 
     class Config:
         populate_by_name = True

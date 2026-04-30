@@ -49,5 +49,22 @@ class Database:
         await self.db.activity_logs.create_index("createdAt")
         await self.db.activity_logs.create_index("entityType")
 
+        # Products
+        await self.db.products.create_index("sku", unique=True)
+        await self.db.products.create_index("category")
+        await self.db.products.create_index("location")
+
+        # Stock movements
+        await self.db.stock_movements.create_index("productId")
+        await self.db.stock_movements.create_index("type")
+        await self.db.stock_movements.create_index("date")
+
+        # Warehouses
+        await self.db.warehouses.create_index("code", unique=True)
+
+        # Stocktakes
+        await self.db.stocktakes.create_index("status")
+        await self.db.stocktakes.create_index("date")
+
 
 db = Database()

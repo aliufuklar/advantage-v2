@@ -1,20 +1,15 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-
-const navItems = [
-  { path: '/', label: 'Dashboard', icon: '📊' },
-  { path: '/customers', label: 'Müşteriler', icon: '👥' },
-  { path: '/quotes', label: 'Teklifler', icon: '📋' },
-  { path: '/orders', label: 'Siparişler', icon: '📦' },
-  { path: '/discoveries', label: 'Keşifler', icon: '🔍' },
-  { path: '/personnel', label: 'Personel', icon: '👷' },
-  { path: '/inventory', label: 'Envanter', icon: '📦' },
-  { path: '/finance', label: 'Finans', icon: '💰' },
-];
+import { RoleBadge } from '@/components/RoleBadge';
+import { NAV_ITEMS, UserRole } from '@/types';
 
 export function AppLayout() {
   const location = useLocation();
   const { user, logout } = useAuth();
+
+  // Get navigation items based on user's primary role
+  const primaryRole = (user?.roles?.[0] as UserRole) || 'user';
+  const navItems = NAV_ITEMS[primaryRole] || NAV_ITEMS.user;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -32,13 +27,23 @@ export function AppLayout() {
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
-                  <span className="mr-1">{item.icon}</span>
                   {item.label}
                 </Link>
               ))}
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">{user?.fullName}</span>
+              {user && (
+                <div className="flex items-center gap-2">
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-gray-900">{user.fullName}</p>
+                    <div className="flex gap-1">
+                      {user.roles.map((role) => (
+                        <RoleBadge key={role} role={role as UserRole} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
               <button
                 onClick={logout}
                 className="text-sm text-gray-500 hover:text-gray-700"
