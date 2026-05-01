@@ -16,6 +16,10 @@ import { SuppliersPage } from '@/pages/SuppliersPage';
 import { PurchaseOrdersPage } from '@/pages/PurchaseOrdersPage';
 import { SupplierQuotesPage } from '@/pages/SupplierQuotesPage';
 import { AccessDenied } from '@/pages/AccessDeniedPage';
+import { AIStudioPage } from '@/pages/AIStudioPage';
+import { EInvoicePage } from '@/pages/EInvoicePage';
+import { MediaPage } from '@/pages/MediaPage';
+import { CampaignDetailPage } from '@/pages/CampaignDetail';
 import { PermissionGuard } from '@/components/PermissionGuard';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -125,6 +129,38 @@ function AppRoutes() {
           element={
             <PermissionGuard requiredPermissions={['purchasing:read']} redirectTo="/access-denied">
               <SupplierQuotesPage />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="ai-studio"
+          element={
+            <PermissionGuard requiredPermissions={['quotes:read']} redirectTo="/access-denied">
+              <AIStudioPage />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="e-invoices"
+          element={
+            <PermissionGuard requiredPermissions={['orders:read']} redirectTo="/access-denied">
+              <EInvoicePage />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="media"
+          element={
+            <PermissionGuard requiredPermissions={['media:read']} redirectTo="/access-denied">
+              <MediaPage />
+            </PermissionGuard>
+          }
+        />
+        <Route
+          path="media/:id"
+          element={
+            <PermissionGuard requiredPermissions={['media:read']} redirectTo="/access-denied">
+              <CampaignDetailPage />
             </PermissionGuard>
           }
         />

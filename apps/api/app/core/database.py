@@ -20,7 +20,7 @@ class Database:
             self.client.close()
 
     async def _create_indexes(self):
-        if not self.db:
+        if self.db is None:
             return
 
         # Customers

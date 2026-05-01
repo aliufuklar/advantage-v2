@@ -24,6 +24,8 @@ export function OrdersPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedOrderForEInvoice, setSelectedOrderForEInvoice] = useState<Order | null>(null);
+  const [creatingEInvoice, setCreatingEInvoice] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -68,6 +70,25 @@ export function OrdersPage() {
       setOrders(prev => prev.map(o => o.id === orderId ? updated as Order : o));
     } catch (error) {
       console.error('Failed to change status:', error);
+    }
+  };
+
+  const handleSendEInvoice = async (order: Order, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedOrderForEInvoice(order);
+    setCreatingEInvoice(true);
+    try {
+      const einvoice = await api.createEInvoiceFromOrder(order.id);
+      alert(`E-Fatura oluşturuldu: ${(einvoice as any).invoiceNumber}`);
+      // Refresh orders to show einvoiceId
+      const updated = await api.getOrders();
+      setOrders(updated as Order[]);
+    } catch (error) {
+      console.error('Failed to create e-invoice:', error);
+      alert('E-Fatura oluşturulamadı');
+    } finally {
+      setCreatingEInvoice(false);
+      setSelectedOrderForEInvoice(null);
     }
   };
 
@@ -117,6 +138,7 @@ export function OrdersPage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Öncelik</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bitiş Tarihi</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Checklist</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">E-Fatura</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -177,6 +199,19 @@ export function OrdersPage() {
                       </div>
                     ) : (
                       <span className="text-xs text-gray-400">-</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {(order as any).einvoiceId ? (
+                      <span className="text-xs text-green-600">{(order as any).einvoiceId}</span>
+                    ) : (
+                      <button
+                        onClick={(e) => handleSendEInvoice(order, e)}
+                        disabled={creatingEInvoice}
+                        className="text-xs text-blue-600 hover:text-blue-800 disabled:opacity-50"
+                      >
+                        {creatingEInvoice && selectedOrderForEInvoice?.id === order.id ? 'Oluşturuluyor...' : 'E-Fatura Gönder'}
+                      </button>
                     )}
                   </td>
                 </tr>

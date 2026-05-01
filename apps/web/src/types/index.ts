@@ -31,6 +31,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
     'finance:read', 'finance:create', 'finance:update', 'finance:delete',
     'production:read', 'production:create', 'production:update', 'production:delete',
     'purchasing:read', 'purchasing:create', 'purchasing:update', 'purchasing:delete',
+    'media:read', 'media:create', 'media:update', 'media:delete',
     'reports:read',
     'users:read', 'users:update', 'users:manage_roles',
   ],
@@ -44,6 +45,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
     'finance:read', 'finance:create', 'finance:update', 'finance:delete',
     'production:read', 'production:create', 'production:update', 'production:delete',
     'purchasing:read', 'purchasing:create', 'purchasing:update', 'purchasing:delete',
+    'media:read', 'media:create', 'media:update', 'media:delete',
     'reports:read',
   ],
   sales: [
@@ -123,7 +125,8 @@ export const NAV_ITEMS: Record<UserRole, NavItem[]> = {
     { label: 'Inventory', path: '/inventory', requiredPermissions: ['inventory:read'] },
     { label: 'Personnel', path: '/personnel', requiredPermissions: ['personnel:read'] },
     { label: 'Finance', path: '/finance', requiredPermissions: ['finance:read'] },
-    { label: 'Reports', path: '/reports', requiredPermissions: ['reports:read'] },
+    { label: 'Media', path: '/media', requiredPermissions: ['media:read'] },
+    { label: 'AI Studio', path: '/ai-studio', requiredPermissions: ['quotes:read'] },
   ],
   manager: [
     { label: 'Dashboard', path: '/', requiredPermissions: [] },
@@ -136,7 +139,8 @@ export const NAV_ITEMS: Record<UserRole, NavItem[]> = {
     { label: 'Inventory', path: '/inventory', requiredPermissions: ['inventory:read'] },
     { label: 'Personnel', path: '/personnel', requiredPermissions: ['personnel:read'] },
     { label: 'Finance', path: '/finance', requiredPermissions: ['finance:read'] },
-    { label: 'Reports', path: '/reports', requiredPermissions: ['reports:read'] },
+    { label: 'Media', path: '/media', requiredPermissions: ['media:read'] },
+    { label: 'AI Studio', path: '/ai-studio', requiredPermissions: ['quotes:read'] },
   ],
   sales: [
     { label: 'Dashboard', path: '/', requiredPermissions: [] },
@@ -153,7 +157,7 @@ export const NAV_ITEMS: Record<UserRole, NavItem[]> = {
   finance: [
     { label: 'Dashboard', path: '/', requiredPermissions: [] },
     { label: 'Finance', path: '/finance', requiredPermissions: ['finance:read'] },
-    { label: 'Reports', path: '/reports', requiredPermissions: ['reports:read'] },
+    { label: 'AI Studio', path: '/ai-studio', requiredPermissions: ['quotes:read'] },
   ],
   viewer: [
     { label: 'Dashboard', path: '/', requiredPermissions: [] },
@@ -165,7 +169,7 @@ export const NAV_ITEMS: Record<UserRole, NavItem[]> = {
     { label: 'Inventory', path: '/inventory', requiredPermissions: ['inventory:read'] },
     { label: 'Personnel', path: '/personnel', requiredPermissions: ['personnel:read'] },
     { label: 'Finance', path: '/finance', requiredPermissions: ['finance:read'] },
-    { label: 'Reports', path: '/reports', requiredPermissions: ['reports:read'] },
+    { label: 'AI Studio', path: '/ai-studio', requiredPermissions: ['quotes:read'] },
   ],
   user: [
     { label: 'Dashboard', path: '/', requiredPermissions: [] },
@@ -692,4 +696,93 @@ export interface Project {
   completedAt?: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+// ==================== MEDIA PLANNING ====================
+
+export interface Campaign {
+  id: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  status: 'planning' | 'active' | 'paused' | 'completed';
+  budget: number;
+  spent: number;
+  channels: string[];
+  targetAudience?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface AdPlacement {
+  id?: string;
+  campaignId: string;
+  channel: 'social' | 'print' | 'online' | 'tv' | 'radio';
+  name: string;
+  date: string;
+  cost: number;
+  reach?: number;
+  notes?: string;
+  createdAt?: string;
+}
+
+export interface ChannelBudget {
+  channel: string;
+  allocated: number;
+  spent: number;
+  placements: number;
+}
+
+export interface MediaBudget {
+  totalBudget: number;
+  totalSpent: number;
+  remaining: number;
+  channelBreakdown: ChannelBudget[];
+  roi?: number;
+  totalReach: number;
+}
+
+export interface CampaignDetail extends Omit<Campaign, 'budget' | 'spent'> {
+  budget: MediaBudget;
+  placements: AdPlacement[];
+}
+
+// ==================== E-INVOICE ====================
+
+export interface EInvoiceItem {
+  description: string;
+  quantity: number;
+  unit: string;
+  unitPrice: number;
+  total: number;
+}
+
+export interface EInvoice {
+  id: string;
+  orderId?: string;
+  invoiceNumber?: string;
+  issueDate?: string;
+  customerTaxId: string;
+  customerTitle: string;
+  items: EInvoiceItem[];
+  subtotal: number;
+  taxAmount: number;
+  total: number;
+  status: 'draft' | 'sent' | 'delivered' | 'read' | 'error';
+  providerInvoiceId?: string;
+  sentAt?: string;
+  deliveredAt?: string;
+  errorMessage?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface EInvoiceSettings {
+  provider: string;
+  apiKey?: string;
+  apiSecret?: string;
+  companyTitle: string;
+  taxId: string;
+  address: string;
 }

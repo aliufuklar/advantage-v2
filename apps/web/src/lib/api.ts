@@ -641,6 +641,145 @@ class ApiClient {
   async deleteProjectTask(projectId: string, taskId: string) {
     return this.request(`/production/projects/${projectId}/tasks/${taskId}`, { method: 'DELETE' });
   }
+
+  // ==================== MEDIA ====================
+
+  async getCampaigns(params?: { status?: string }) {
+    const queryParams = new URLSearchParams();
+    if (params?.status) queryParams.append('status', params.status);
+    const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
+    return this.request(`/media${query}`);
+  }
+
+  async getCampaign(id: string) {
+    return this.request(`/media/${id}`);
+  }
+
+  async createCampaign(data: unknown) {
+    return this.request('/media', { method: 'POST', body: data });
+  }
+
+  async updateCampaign(id: string, data: unknown) {
+    return this.request(`/media/${id}`, { method: 'PUT', body: data });
+  }
+
+  async deleteCampaign(id: string) {
+    return this.request(`/media/${id}`, { method: 'DELETE' });
+  }
+
+  async getPlacements(params?: { campaignId?: string; channel?: string }) {
+    const queryParams = new URLSearchParams();
+    if (params?.campaignId) queryParams.append('campaignId', params.campaignId);
+    if (params?.channel) queryParams.append('channel', params.channel);
+    const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
+    return this.request(`/media/placements${query}`);
+  }
+
+  async getPlacement(id: string) {
+    return this.request(`/media/placements/${id}`);
+  }
+
+  async createPlacement(data: unknown) {
+    return this.request('/media/placements', { method: 'POST', body: data });
+  }
+
+  async updatePlacement(id: string, data: unknown) {
+    return this.request(`/media/placements/${id}`, { method: 'PUT', body: data });
+  }
+
+  async deletePlacement(id: string) {
+    return this.request(`/media/placements/${id}`, { method: 'DELETE' });
+  }
+
+  async getMediaBudgetSummary() {
+    return this.request('/media/budget/summary');
+  }
+
+  // ==================== DESIGNS ====================
+
+  async getDesigns() {
+    return this.request('/designs');
+  }
+
+  async getDesign(id: string) {
+    return this.request(`/designs/${id}`);
+  }
+
+  async createDesign(data: unknown) {
+    return this.request('/designs', { method: 'POST', body: data });
+  }
+
+  async updateDesign(id: string, data: unknown) {
+    return this.request(`/designs/${id}`, { method: 'PUT', body: data });
+  }
+
+  async deleteDesign(id: string) {
+    return this.request(`/designs/${id}`, { method: 'DELETE' });
+  }
+
+  async createDesignVersion(id: string, canvasData: string) {
+    return this.request(`/designs/${id}/versions`, { method: 'POST', body: { canvasData } });
+  }
+
+  async getDesignVersions(id: string) {
+    return this.request(`/designs/${id}/versions`);
+  }
+
+  async analyzeSketch(data: { imageData: string; prompt?: string }) {
+    return this.request('/designs/analyze-sketch', { method: 'POST', body: data });
+  }
+
+  // ==================== E-INVOICE ====================
+
+  // Settings
+  async getEInvoiceSettings() {
+    return this.request('/einvoices/settings');
+  }
+
+  async updateEInvoiceSettings(data: unknown) {
+    return this.request('/einvoices/settings', { method: 'PUT', body: data });
+  }
+
+  // E-Invoices
+  async getEInvoices(params?: { status?: string; customerTaxId?: string }) {
+    const queryParams = new URLSearchParams();
+    if (params?.status) queryParams.append('status', params.status);
+    if (params?.customerTaxId) queryParams.append('customerTaxId', params.customerTaxId);
+    const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
+    return this.request(`/einvoices${query}`);
+  }
+
+  async getEInvoice(id: string) {
+    return this.request(`/einvoices/${id}`);
+  }
+
+  async createEInvoice(data: unknown) {
+    return this.request('/einvoices', { method: 'POST', body: data });
+  }
+
+  async updateEInvoice(id: string, data: unknown) {
+    return this.request(`/einvoices/${id}`, { method: 'PUT', body: data });
+  }
+
+  async sendEInvoice(id: string) {
+    return this.request(`/einvoices/${id}/send`, { method: 'POST' });
+  }
+
+  async simulateDelivery(id: string) {
+    return this.request(`/einvoices/${id}/simulate-delivery`, { method: 'POST' });
+  }
+
+  async deleteEInvoice(id: string) {
+    return this.request(`/einvoices/${id}`, { method: 'DELETE' });
+  }
+
+  async getEInvoicePDF(id: string) {
+    return this.request(`/einvoices/${id}/pdf`);
+  }
+
+  async createEInvoiceFromOrder(orderId: string) {
+    return this.request(`/einvoices/create-from-order/${orderId}`, { method: 'POST' });
+  }
 }
 
 export const api = new ApiClient();

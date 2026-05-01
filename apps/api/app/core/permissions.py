@@ -75,6 +75,12 @@ class Permission(str, Enum):
     PURCHASING_UPDATE = "purchasing:update"
     PURCHASING_DELETE = "purchasing:delete"
 
+    # Media permissions
+    MEDIA_READ = "media:read"
+    MEDIA_CREATE = "media:create"
+    MEDIA_UPDATE = "media:update"
+    MEDIA_DELETE = "media:delete"
+
     # Reports permissions
     REPORTS_READ = "reports:read"
 
@@ -97,6 +103,7 @@ ROLE_PERMISSIONS: dict[str, Set[str]] = {
         Permission.FINANCE_READ, Permission.FINANCE_CREATE, Permission.FINANCE_UPDATE, Permission.FINANCE_DELETE,
         Permission.PRODUCTION_READ, Permission.PRODUCTION_CREATE, Permission.PRODUCTION_UPDATE, Permission.PRODUCTION_DELETE,
         Permission.PURCHASING_READ, Permission.PURCHASING_CREATE, Permission.PURCHASING_UPDATE, Permission.PURCHASING_DELETE,
+        Permission.MEDIA_READ, Permission.MEDIA_CREATE, Permission.MEDIA_UPDATE, Permission.MEDIA_DELETE,
         Permission.REPORTS_READ,
         Permission.USERS_READ, Permission.USERS_UPDATE, Permission.USERS_MANAGE_ROLES,
     },
@@ -110,6 +117,7 @@ ROLE_PERMISSIONS: dict[str, Set[str]] = {
         Permission.FINANCE_READ, Permission.FINANCE_CREATE, Permission.FINANCE_UPDATE, Permission.FINANCE_DELETE,
         Permission.PRODUCTION_READ, Permission.PRODUCTION_CREATE, Permission.PRODUCTION_UPDATE, Permission.PRODUCTION_DELETE,
         Permission.PURCHASING_READ, Permission.PURCHASING_CREATE, Permission.PURCHASING_UPDATE, Permission.PURCHASING_DELETE,
+        Permission.MEDIA_READ, Permission.MEDIA_CREATE, Permission.MEDIA_UPDATE, Permission.MEDIA_DELETE,
         Permission.REPORTS_READ,
     },
     Role.SALES: {
